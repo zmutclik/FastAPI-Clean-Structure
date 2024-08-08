@@ -1,19 +1,25 @@
 from sqlalchemy.orm import Session
-from fastapi import Request, Response
-from datetime import datetime, date
-from app.schemas.logs import dataLogs
-from app.core.env import APP_NAME
+from app.models.logs import TableLogs as MainTable
 
 
 class LogsRepository:
-    startTime: datetime
-    endTime: datetime
 
     def __init__(self, db: Session) -> None:
         self.db = db
-        self.startTime = datetime.now()
 
-    def create(request: Request):
-        request.state.uuid = None
-        request.state.username = None
-        request.state.useraccess = None
+    def get(self):
+        pass
+
+    def all(self):
+        pass
+
+    def create(self, dataIn):
+        data__ = MainTable(**dataIn)
+        self.db.add(data__)
+        self.db.commit()
+
+    # def update(self):
+    #     pass
+
+    # def delete(self):
+    #     pass
