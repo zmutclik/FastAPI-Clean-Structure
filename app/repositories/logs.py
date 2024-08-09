@@ -1,12 +1,13 @@
 from sqlalchemy.orm import Session
+
+from app.dependencies.logs import get_db
 from app.models.logs import TableLogs as MainTable
 
 
 class LogsRepository:
-    db: Session
-
-    def __init__(self, db: Session) -> None:
-        self.db = db
+    def __init__(self) -> None:
+        self.db: Session = get_db().__next__()
+        pass
 
     def get(self):
         pass

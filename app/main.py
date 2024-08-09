@@ -74,10 +74,9 @@ app.include_router(main.router)
 
 
 @app.middleware("http")
-async def add_process_time_header(request: Request, call_next, db: Session = Depends(get_db)):
-    logs = LogServices(db)
+async def add_process_time_header(request: Request, call_next):
+    logs = LogServices()
     await logs.start(request)
     response = await call_next(request)
-    datalogs = await logs.finish(request, response)
-    # response.headers["X-Process-Time"] = str(datalogs)
+    response.headers["X-Process-Time"] = str(await logs.finish(request, response))
     return response

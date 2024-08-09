@@ -5,12 +5,11 @@ from datetime import date, time,datetime
 
 class dataLogs(BaseModel):
     startTime: datetime
-    endTime: Union[datetime, None] = None
     app: str
     platform: str
     browser: str
     path: str
-    path_params: Union[Json, None] = None
+    path_params: Union[str, None] = None
     method: str
     ipaddress: str
     username: Union[str, None] = None
