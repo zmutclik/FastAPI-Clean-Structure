@@ -3,6 +3,7 @@ from app.models.logs import TableLogs as MainTable
 
 
 class LogsRepository:
+    db: Session
 
     def __init__(self, db: Session) -> None:
         self.db = db
@@ -14,8 +15,8 @@ class LogsRepository:
         pass
 
     def create(self, dataIn):
-        data__ = MainTable(**dataIn)
-        self.db.add(data__)
+        data = MainTable(**dataIn)
+        self.db.add(data)
         self.db.commit()
 
     # def update(self):

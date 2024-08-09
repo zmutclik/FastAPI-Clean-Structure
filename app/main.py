@@ -1,9 +1,15 @@
-from fastapi import FastAPI
+from typing import Annotated
+
+from fastapi import FastAPI, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.staticfiles import StaticFiles
+from sqlalchemy.orm import Session
+
 from app.utils.files import getFile
 from app.core.env import APP_NAME, APP_DESCRIPTIOIN
+from app.dependencies.logs import get_db
+from app.services.logs import LogServices
 
 
 # from app.libs.logs import createLogs, ComplateLogs
@@ -67,10 +73,11 @@ app.include_router(main.router)
 ###################################################################################################################
 
 
-# @app.middleware("http")
-# async def add_process_time_header(request: Request, call_next):
-#     dataLogs = await createLogs(request)
-#     response = await call_next(request)
-#     dataLogs = await ComplateLogs(dataLogs, request, response)
-#     response.headers["X-Process-Time"] = str(dataLogs.process_time)
-#     return response
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next, db: Session = Depends(get_db)):
+    logs = LogServices(db)
+    await logs.start(request)
+    response = await call_next(request)
+    datalogs = await logs.finish(request, response)
+    # response.headers["X-Process-Time"] = str(datalogs)
+    return response

@@ -15,7 +15,7 @@ class TableLogs(Base):
     platform = Column(String(100), index=True)
     browser = Column(String(100), index=True)
     path = Column(String(256), index=True)
-    path_params = Column(JSONB)
+    path_params = Column(String(256))
     method = Column(String(10), index=True)
     ipaddress = Column(String(50), index=True)
     username = Column(String(50), index=True)

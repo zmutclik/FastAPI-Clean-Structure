@@ -1,13 +1,6 @@
 
 .DS_Store
 
-files/data/mysqldata/*
-files/data/data/*
-files/data/db/*
-files/temp/*
-
-!.gitkeep
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -133,6 +126,15 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-!static/node_modules/*/dist/
+!files_static/node_modules/*/dist/
 
 .vscode
+
+###########################################################
+files/data/mysqldata/*
+files/data/data/*
+files/data/db/*
+files/temp/*
+
+!files/data/*/.gitkeep
+!files/temp/.gitkeep

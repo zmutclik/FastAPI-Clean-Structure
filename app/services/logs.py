@@ -1,9 +1,11 @@
 from datetime import datetime
+import time
 import json
 
 from fastapi import Request, Response
 from starlette.routing import Match
 from user_agents import parse
+from sqlalchemy.orm import Session
 
 from app.schemas.logs import dataLogs
 from app.repositories.logs import LogsRepository
@@ -12,9 +14,9 @@ from app.core.env import APP_NAME
 
 class LogServices:
 
-    def __init__(self, repository: LogsRepository):
-        self.repository = repository
-        self.startTime = datetime.now()
+    def __init__(self, db: Session):
+        self.repository = LogsRepository(db)
+        self.startTime = time.time()
 
     def parse_params(self, request: Request):
         path_params = {}
@@ -43,6 +45,7 @@ class LogServices:
     async def finish(self, request: Request, response: Response):
         self.data.username = request.state.username
         self.data.status_code = response.status_code
-        self.data.process_time = datetime.now() - self.data.startTime
+        self.data.process_time = time.time() - self.startTime
 
         self.repository.create(self.data.model_dump())
+
