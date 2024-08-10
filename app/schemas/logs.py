@@ -6,6 +6,7 @@ from datetime import date, time,datetime
 class dataLogs(BaseModel):
     startTime: datetime
     app: str
+    client_id: Union[str, None] = None
     platform: str
     browser: str
     path: str

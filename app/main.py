@@ -78,5 +78,5 @@ async def add_process_time_header(request: Request, call_next):
     logs = LogServices()
     await logs.start(request)
     response = await call_next(request)
-    response.headers["X-Process-Time"] = str(await logs.finish(request, response))
+    await logs.finish(request, response)
     return response
