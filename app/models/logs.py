@@ -2,7 +2,7 @@ import os
 
 from sqlalchemy import Column, Integer, String, Date, Time, Float, DateTime
 
-from app.dependencies.logs import Base, fileDB_ENGINE, engine_db
+from app.dependencies.logs import Base
 
 
 class TableLogs(Base):
@@ -20,9 +20,3 @@ class TableLogs(Base):
     username = Column(String(50), index=True)
     status_code = Column(Integer, index=True)
     process_time = Column(Float, nullable=True)
-
-
-if os.path.exists(fileDB_ENGINE):
-    file_stats = os.stat(fileDB_ENGINE)
-    if file_stats.st_size == 0:
-        Base.metadata.create_all(bind=engine_db)
