@@ -10,7 +10,11 @@ load_dotenv(dotenv_path)
 
 #######################################################################################################################
 APP_NAME = os.environ.get("APP_NAME", "FastAPI-Clean-Structure")
-APP_DESCRIPTIOIN = os.environ.get("APP_DESCRIPTIOIN", "This is a very fancy project, with auto docs for the API and everything.")
+APP_DESCRIPTIOIN = os.environ.get(
+    "APP_DESCRIPTIOIN",
+    "This is a very fancy project, with auto docs for the API and everything.",
+)
 
-
+SECRET_TEXT = os.environ.get("SECRET_TEXT", "HxekWSNWYKyOsezYRQxFEJNgbUroNzDT")
+ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
 #######################################################################################################################
