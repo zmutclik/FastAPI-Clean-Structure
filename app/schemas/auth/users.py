@@ -5,7 +5,7 @@ from datetime import date, time, datetime
 from app.schemas.auth.scope import Scopes
 
 
-class users_toSave(BaseModel):
+class UserSave(BaseModel):
     username: str
     email: EmailStr
     full_name: str
@@ -13,7 +13,7 @@ class users_toSave(BaseModel):
     created_user: str
 
 
-class users_toResponse(BaseModel):
+class UserResponse(BaseModel):
     # id: int
     username: str
     email: EmailStr

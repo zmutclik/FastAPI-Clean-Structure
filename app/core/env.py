@@ -14,7 +14,9 @@ APP_DESCRIPTIOIN = os.environ.get(
     "APP_DESCRIPTIOIN",
     "This is a very fancy project, with auto docs for the API and everything.",
 )
-
+# to get a string like this run:
+# openssl rand -hex 32
 SECRET_TEXT = os.environ.get("SECRET_TEXT", "HxekWSNWYKyOsezYRQxFEJNgbUroNzDT")
-ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+ALGORITHM = "HS256"
 #######################################################################################################################

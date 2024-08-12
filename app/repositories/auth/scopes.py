@@ -1,5 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordBearer
 
 from app.dependencies.logs import get_db
 from app.models.auth import ScopeTable as MainTable
@@ -9,6 +10,15 @@ class ScopesRepository:
     def __init__(self) -> None:
         self.db: Session = get_db().__next__()
 
+    def oauth2_scheme(self):
+        ScopeList = {}
+        # for item in self.all():
+        #     ScopeList[item.scope] = item.desc
+        return OAuth2PasswordBearer(
+            tokenUrl="/auth/token",
+            scopes=ScopeList,
+        )
+
     def get(self, scope: str):
         return self.db.query(MainTable).filter(MainTable.scope == scope).first()
 
@@ -16,7 +26,7 @@ class ScopesRepository:
         return self.db.query(MainTable).filter(MainTable.id == id).first()
 
     def all(self):
-        return self.db.query(MainTable).order_by(MainTable.scope).all()
+        return self.db.query(MainTable).all()
 
     def create(self, dataIn):
         data = MainTable(**dataIn)

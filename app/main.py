@@ -11,6 +11,7 @@ from app.core.env import APP_NAME, APP_DESCRIPTIOIN
 from app.dependencies.logs import get_db
 from app.services.logs import LogServices
 
+from app.routers.auth import user#, scope, token
 
 # from app.libs.logs import createLogs, ComplateLogs
 # from app.libs.auth import auth
@@ -65,6 +66,10 @@ async def custom_swagger_ui_html_cdn():
 ###################################################################################################################
 ### STATIC ###
 app.mount("/static", StaticFiles(directory="files_static", html=False), name="static")
+
+# app.include_router(token.router)
+app.include_router(user.router)
+# app.include_router(scope.router)
 
 ### MAIN ###
 app.include_router(main.router)
