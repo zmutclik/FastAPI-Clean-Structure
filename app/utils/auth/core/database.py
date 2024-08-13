@@ -1,27 +1,36 @@
 import os
+from datetime import datetime
 
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, Time, TIMESTAMP, DateTime, func, case, Float, text
-from sqlalchemy.orm import column_property, relationship, deferred, Session
+from fastapi import Depends
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker,Session
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_property
 
-from app.utils.auth.core.auth import Base, fileDB_ENGINE, engine_db
+from app.utils.auth.models.users import UsersTable
+from app.utils.auth.models.scope import ScopeTable
+from app.utils.auth.models.userscope import UserScopeTable
 
 
-class UserScopeTable(Base):
-    __tablename__ = "user_scopes"
+now = datetime.now()
+fileDB_ENGINE = "./files/data/db/logs_auth.db"
+DB_ENGINE = "sqlite:///" + fileDB_ENGINE
 
-    id = Column(Integer, primary_key=True, index=True)
-    id_user = Column(Integer, ForeignKey("user.id"), index=True)
-    id_scope = Column(Integer, ForeignKey("scopes.id"), index=True)
+engine_db = create_engine(DB_ENGINE, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine_db)
 
-    USER = relationship("UsersTable", back_populates="SCOPES")
-    SCOPES = relationship("ScopeTable", back_populates="USERCOPES")
 
-    @hybrid_property
-    def scope(self) -> str:
-        return self.SCOPES.scope
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    except:
+        db.rollback()
+        raise
+    finally:
+        db.close()
 
+Base = declarative_base()
 
 if not os.path.exists(fileDB_ENGINE):
     with open(fileDB_ENGINE, "w") as f:

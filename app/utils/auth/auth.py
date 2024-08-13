@@ -10,9 +10,9 @@ from sqlalchemy.orm import Session
 
 from app.core.env import SECRET_TEXT, ALGORITHM
 
-from app.dependencies.auth import engine_db, get_db
-from app.repositories.auth.users import UsersRepository
-from app.repositories.auth.scopes import ScopesRepository
+from app.utils.auth.core.auth import engine_db, get_db
+from app.utils.auth.repositories.users import UsersRepository
+from app.utils.auth.repositories.scopes import ScopesRepository
 
 from app.schemas.auth.users import UserResponse
 from app.schemas.auth.token import TokenData

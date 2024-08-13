@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from fastapi import Form, Depends
 
 from app.dependencies.logs import get_db
-from app.dependencies.auth import Base
+from app.utils.auth.core.auth import Base
 from app.models.auth import UsersTable as MainTable
 
 

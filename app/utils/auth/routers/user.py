@@ -8,10 +8,10 @@ from sqlalchemy.orm import Session
 # from app.database_ import get_db, conn_db
 # from ..database_ import get_db
 # from ..dependecies.auth import get_current_active_user, User, get_password_hash, verify_password
-from app.dependencies.auth import get_db
-from app.repositories.auth.users import UsersRepository
+from app.utils.auth.core.auth import get_db
+from app.utils.auth.repositories.users import UsersRepository
 
-from app.utils.auth import get_current_active_user, verify_password, get_password_hash
+from app.utils.auth.auth import get_current_active_user, verify_password, get_password_hash
 
 from app.schemas.auth.users import UserResponse, UserSave
 
