@@ -7,7 +7,7 @@ from fastapi.security import (
     OAuth2PasswordRequestForm,
 )
 from app.core.env import ACCESS_TOKEN_EXPIRE_MINUTES
-from app.utils.auth.auth import authenticate_user, verify_scope, create_access_token
+from app.utils.auth.auth__ import authenticate_user, verify_scope, create_access_token
 from app.schemas.auth.token import Token, TokenData
 
 

@@ -3,7 +3,7 @@ from typing import List, Annotated
 from fastapi import APIRouter, Depends, Security
 from sqlalchemy.orm import Session
 from app.utils.auth.core.auth import get_db
-from app.utils.auth.auth import get_current_active_user
+from app.utils.auth.auth__ import get_current_active_user
 from app.utils.auth.repositories.scopes import ScopesRepository
 from app.schemas.auth.users import UserResponse
 from app.schemas.auth.scope import Scopes, ScopesSave
