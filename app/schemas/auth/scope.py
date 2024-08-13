@@ -6,3 +6,8 @@ from datetime import date, time, datetime
 class Scopes(BaseModel):
     id: int
     scope: str
+    
+    
+class ScopesSave(BaseModel):
+    scope: str
+    desc: str

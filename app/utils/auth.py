@@ -8,9 +8,9 @@ from fastapi import Depends, HTTPException, Security, status, Request
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from sqlalchemy.orm import Session
 
-from app.core.env import SECRET_TEXT, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.core.env import SECRET_TEXT, ALGORITHM
 
-from app.dependencies.auth import engine_db
+from app.dependencies.auth import engine_db, get_db
 from app.repositories.auth.users import UsersRepository
 from app.repositories.auth.scopes import ScopesRepository
 
@@ -20,12 +20,13 @@ from app.schemas.auth.token import TokenData
 ########################################################################################################################
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-scope = ScopesRepository()
+
 ScopeList = {}
-# with engine_db.begin() as connection:
-#     with Session(bind=connection) as db:
-for item in scope.all():
-    ScopeList[item.scope] = item.desc
+with engine_db.begin() as connection:
+    with Session(bind=connection) as db:
+        scope = ScopesRepository(db)
+        for item in scope.all():
+            ScopeList[item.scope] = item.desc
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/auth/token",
@@ -41,8 +42,8 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def authenticate_user(username: str, password: str):
-    user = UsersCrud.get(username)
+def authenticate_user(username: str, password: str, userrepo=UsersRepository(Depends(get_db))):
+    user = userrepo.get(username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -60,9 +61,7 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
 
 
 async def get_current_user(
-    security_scopes: SecurityScopes,
-    token: Annotated[str, Depends(oauth2_scheme)],
-    request: Request,
+    security_scopes: SecurityScopes, token: Annotated[str, Depends(oauth2_scheme)], request: Request, userrepo=UsersRepository(Depends(get_db))
 ):
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
@@ -82,7 +81,7 @@ async def get_current_user(
         token_data = TokenData(scopes=token_scopes, username=username)
     except (JWTError, ValidationError):
         raise credentials_exception
-    user = UsersCrud.get(token_data.username)
+    user = userrepo.get(token_data.username)
     if user is None:
         raise credentials_exception
     for scope in security_scopes.scopes:

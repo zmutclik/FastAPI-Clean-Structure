@@ -1,23 +1,12 @@
-
 from datetime import datetime, date
-from fastapi import APIRouter, Depends,  Security
+from typing import List, Annotated
+from fastapi import APIRouter, Depends, Security
 from sqlalchemy.orm import Session
-# from app.database_ import get_db, conn_db
-from ..database_ import get_db
-from ..dependecies.auth import get_current_active_user, User
-from ..cruds import ScopeCrud
-### SCHEMAS ############################################################################################################
-from typing import Generic, TypeVar, List, Optional, Union, Annotated, Any, Dict
-from pydantic import BaseModel, Json, Field
-import uuid
-
-
-class scope(BaseModel):
-    # uuid: uuid.UUID
-    id:int
-    scope: str
-    desc: str
-
+from app.dependencies.auth import get_db
+from app.utils.auth import get_current_active_user
+from app.repositories.auth.scopes import ScopesRepository
+from app.schemas.auth.users import UserResponse
+from app.schemas.auth.scope import Scopes, ScopesSave
 
 ########################################################################################################################
 router = APIRouter(
@@ -28,49 +17,50 @@ router = APIRouter(
 
 @router.get(
     "/scopes",
-    response_model=List[scope],
+    response_model=List[Scopes],
 )
 async def get_scopes_list(
-    current_user: Annotated[User, Security(get_current_active_user, scopes=["admin"])],
+    current_user: Annotated[UserResponse, Security(get_current_active_user, scopes=["admin"])],
+    db: Session = Depends(get_db),
 ):
-    return ScopeCrud.all()
+    return ScopesRepository(db).all()
 
 
 @router.get(
     "/scope/{ID}",
-    response_model=scope,
+    response_model=UserResponse,
 )
 async def get_detail_scope(
     ID: int,
-    current_user: Annotated[User, Security(get_current_active_user, scopes=["admin"])],
+    current_user: Annotated[UserResponse, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
-    return ScopeCrud.get(db, ID)
+    return ScopesRepository(db).get(db, ID)
 
 
 @router.post(
     "/scope",
-    response_model=scope,
+    response_model=UserResponse,
 )
 async def post_scope_baru(
-    dataIn: ScopeCrud.data_save,
-    current_user: Annotated[User, Security(get_current_active_user, scopes=["admin"])],
+    dataIn: ScopesSave,
+    current_user: Annotated[UserResponse, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
-    return ScopeCrud.save(db, ScopeCrud.data_save(**dataIn.model_dump()))
+    return ScopesRepository(db).save(db, ScopesSave(**dataIn.model_dump()))
 
 
 @router.put(
     "/scope/{ID}",
-    response_model=scope,
+    response_model=UserResponse,
 )
 async def put_update_scope(
     ID: int,
-    dataIn: ScopeCrud.data_save,
-    current_user: Annotated[User, Security(get_current_active_user, scopes=["admin"])],
+    dataIn: ScopesSave,
+    current_user: Annotated[UserResponse, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
-    return ScopeCrud.put(db, ID, ScopeCrud.data_save(**dataIn.model_dump()))
+    return ScopesRepository(db).put(db, ID, ScopesSave(**dataIn.model_dump()))
 
 
 # @router.delete(
