@@ -3,17 +3,13 @@ from datetime import datetime, timedelta
 from fastapi import Form, Depends, APIRouter, HTTPException, Security, status
 from sqlalchemy.orm import Session
 
-# from ..cruds import UsersCrud, UserScopeCrud
+from ..core.database import get_db
+from ..repositories.users import UsersRepository
 
-# from app.database_ import get_db, conn_db
-# from ..database_ import get_db
-# from ..dependecies.auth import get_current_active_user, User, get_password_hash, verify_password
-from app.utils.auth.core.auth import get_db
-from app.utils.auth.repositories.users import UsersRepository
+from ..services.users import get_current_active_user, verify_password
+from ..services.password import get_password_hash
 
-from app.utils.auth.auth__ import get_current_active_user, verify_password, get_password_hash
-
-from app.schemas.auth.users import UserResponse, UserSave
+from ..schemas.users import UserResponse, UserSave
 
 ### SCHEMAS ############################################################################################################
 from typing import Generic, TypeVar, List, Optional, Union, Annotated, Any, Dict

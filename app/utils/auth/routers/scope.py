@@ -2,11 +2,15 @@ from datetime import datetime, date
 from typing import List, Annotated
 from fastapi import APIRouter, Depends, Security
 from sqlalchemy.orm import Session
-from app.utils.auth.core.auth import get_db
-from app.utils.auth.auth__ import get_current_active_user
-from app.utils.auth.repositories.scopes import ScopesRepository
-from app.schemas.auth.users import UserResponse
-from app.schemas.auth.scope import Scopes, ScopesSave
+
+from ..core.database import get_db
+
+from ..services.users import get_current_active_user
+
+from ..repositories.scopes import ScopesRepository
+
+from ..schemas.users import UserResponse
+from ..schemas.scope import Scopes, ScopesSave
 
 ########################################################################################################################
 router = APIRouter(

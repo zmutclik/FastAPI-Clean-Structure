@@ -1,30 +1,30 @@
 from typing import Annotated
 
 from pydantic import ValidationError
-from fastapi import Security,Depends,HTTPException, Request,status
-from fastapi.security import  SecurityScopes
+from fastapi import Security, Depends, HTTPException, Request, status
+from fastapi.security import SecurityScopes
+from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 
-from app.core.env import SECRET_TEXT,ALGORITHM
-from auth.core.database import get_db
-from auth.repositories.users import UsersRepository
+from app.core.env import SECRET_TEXT, ALGORITHM
+from ..core.database import get_db
+from ..repositories.users import UsersRepository
 
-from auth.services.scope import oauth2_scheme
-from auth.services.password import verify_password
+from ..services.scope import oauth2_scheme
+from ..services.password import verify_password,get_password_hash
 
-from auth.schemas.token import TokenData
-from auth.schemas.users import UserResponse
+from ..schemas.token import TokenData
+from ..schemas.users import UserResponse
 
 
-def authenticate_user(username: str, password: str, userrepo=UsersRepository(Depends(get_db))):
+def authenticate_user(username: str, password: str, db: Session):
+    userrepo = UsersRepository(db)
     user = userrepo.get(username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
         return False
     return user
-
-
 
 
 async def get_current_user(

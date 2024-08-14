@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 
-from app.dependencies.logs import get_db
-from app.models.auth import ScopeTable as MainTable
+from ..models import ScopeTable as MainTable, UserScopeTable
 
 
 class ScopesRepository:
@@ -26,6 +25,9 @@ class ScopesRepository:
 
     def all(self):
         return self.session.query(MainTable).all()
+
+    def getScopesUser(self, id: int):
+        return self.session.query(UserScopeTable.SCOPES).join(MainTable.USERCOPES).filter(UserScopeTable.id_user == id).first()
 
     def create(self, dataIn):
         data = MainTable(**dataIn)

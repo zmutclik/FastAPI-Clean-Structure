@@ -3,7 +3,7 @@ from sqlalchemy.orm import column_property, relationship, deferred, Session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from app.utils.auth.core.auth import Base, fileDB_ENGINE, engine_db
+from ..core import Base
 
 
 class UserScopeTable(Base):

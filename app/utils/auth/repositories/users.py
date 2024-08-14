@@ -3,9 +3,8 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from fastapi import Form, Depends
 
-from app.dependencies.logs import get_db
-from app.utils.auth.core.auth import Base
-from app.models.auth import UsersTable as MainTable
+from ..core.database import Base
+from ..models.users import UsersTable as MainTable
 
 
 class UsersRepository:
@@ -20,10 +19,6 @@ class UsersRepository:
 
     def getByEmail(self, email: str):
         return self.session.query(MainTable).filter(MainTable.email == email).first()
-
-    def getScopes(self, id: int):
-        return self.session.query(MainTable.SCOPES).filter(MainTable.id == id).first()
-
     def all(self):
         return self.session.query(MainTable).filter(MainTable.deleted_at != None).order_by(MainTable.username).all()
 

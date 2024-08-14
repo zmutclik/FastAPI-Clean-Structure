@@ -4,11 +4,11 @@ from datetime import datetime
 from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker,Session
-from sqlalchemy.ext.declarative import declarative_base
 
-from app.utils.auth.models.users import UsersTable
-from app.utils.auth.models.scope import ScopeTable
-from app.utils.auth.models.userscope import UserScopeTable
+from ..core import Base
+from ..models.users import UsersTable
+from ..models.scope import ScopeTable
+from ..models.userscope import UserScopeTable
 
 
 now = datetime.now()
@@ -30,7 +30,6 @@ def get_db():
     finally:
         db.close()
 
-Base = declarative_base()
 
 if not os.path.exists(fileDB_ENGINE):
     with open(fileDB_ENGINE, "w") as f:

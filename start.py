@@ -21,6 +21,7 @@ APP_PORT = os.environ.get("APP_PORT", "8012")
 
 if __name__ == "__main__":
     ###################################################################################################################
+    print("APP_ENV : ", APP_ENV)
     if args.module == "ws":
         if APP_ENV == "PRODUCTION":
             uvicorn.run(
