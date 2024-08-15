@@ -19,8 +19,9 @@ class UsersRepository:
 
     def getByEmail(self, email: str):
         return self.session.query(MainTable).filter(MainTable.email == email).first()
+
     def all(self):
-        return self.session.query(MainTable).filter(MainTable.deleted_at != None).order_by(MainTable.username).all()
+        return self.session.query(MainTable).filter(MainTable.deleted_at == None).order_by(MainTable.username).all()
 
     def create(self, dataIn):
         data = MainTable(**dataIn)
@@ -36,4 +37,4 @@ class UsersRepository:
         return self.getById(id)
 
     def delete(self, username: str, id_delete: int) -> None:
-        return self.update(id_delete, {"deleted_at": datetime.now(), "deleted_user": username})
+        self.update(id_delete, {"deleted_at": datetime.now(), "deleted_user": username})

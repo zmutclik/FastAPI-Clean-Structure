@@ -6,6 +6,11 @@ from datetime import date, time, datetime
 class Scopes(BaseModel):
     id: int
     scope: str
+    desc: str
+    
+class UserScopesSave(BaseModel):
+    id_user: int
+    id_scope: int
     
     
 class ScopesSave(BaseModel):

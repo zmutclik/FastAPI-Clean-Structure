@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException,status
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 
@@ -20,12 +20,11 @@ oauth2_scheme = OAuth2PasswordBearer(
 
 
 def verify_scope(id_user: int, scopes: list[str], db: Session):
-    userRepo = ScopesRepository(db)
+    scopeRepo = ScopesRepository(db)
     scopesPass = ["default"]
     scopesUser = []
     scopesUserJs = {}
-    scopesUserDB = userRepo.getScopesUser(id_user)
-    for item in scopesUserDB:
+    for item in scopeRepo.getScopesUser(id_user):
         scopesUser.append(item.scope)
         scopesUserJs[item.scope] = item.scope
     for scope in scopes:

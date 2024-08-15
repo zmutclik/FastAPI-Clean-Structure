@@ -12,6 +12,8 @@ class UserSave(BaseModel):
     hashed_password: str
     created_user: str
 
+class UserSchemas(UserSave):
+    id: int
 
 class UserResponse(BaseModel):
     # id: int

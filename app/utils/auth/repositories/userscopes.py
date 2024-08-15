@@ -1,33 +1,21 @@
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 
-from ..models import ScopeTable as MainTable, UserScopeTable
+from ..models import UserScopeTable as MainTable, ScopeTable
 
 
-class ScopesRepository:
+class UserScopesRepository:
     def __init__(self, db_session: Session) -> None:
         self.session: Session = db_session
 
-    def oauth2_scheme(self):
-        ScopeList = {}
-        for item in self.all():
-            ScopeList[item.scope] = item.desc
-        return OAuth2PasswordBearer(
-            tokenUrl="/auth/token",
-            scopes=ScopeList,
-        )
-
-    def get(self, scope: str):
-        return self.session.query(MainTable).filter(MainTable.scope == scope).first()
-
-    def getById(self, id: int):
+    def get(self, id: int):
         return self.session.query(MainTable).filter(MainTable.id == id).first()
+
+    def getByUser(self, id: int):
+        return self.session.query(MainTable).join(MainTable.USER).join(MainTable.SCOPES).filter(MainTable.id_user == id).all()
 
     def all(self):
         return self.session.query(MainTable).all()
-
-    def getScopesUser(self, id: int):
-        return self.session.query(MainTable).join(MainTable.USERCOPES).filter(UserScopeTable.id_user == id).all()
 
     def create(self, dataIn):
         data = MainTable(**dataIn)
@@ -43,6 +31,6 @@ class ScopesRepository:
         return self.getById(id)
 
     def delete(self, id_delete: int):
-        data = self.getById(id_delete)
+        data = self.get(id_delete)
         self.session.delete(data)
         self.session.commit()

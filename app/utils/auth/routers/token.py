@@ -9,11 +9,9 @@ from sqlalchemy.orm import Session
 from app.core.env import ACCESS_TOKEN_EXPIRE_MINUTES
 from ..core.database import get_db
 
-from ..services.users import authenticate_user
-from ..services.scope import verify_scope
-from ..services.password import create_access_token
+from ..services import authenticate_user, verify_scope, create_access_token
 
-from ..schemas.token import Token, TokenData
+from ..schemas import Token, TokenData
 
 
 ########################################################################################################################
