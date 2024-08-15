@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.dependencies.logs import get_db
-from app.models.logs import TableLogs as MainTable
+from .database import get_db
+from .models import TableLogs as MainTable
 
 
 class LogsRepository:

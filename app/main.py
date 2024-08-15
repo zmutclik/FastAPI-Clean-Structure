@@ -8,13 +8,9 @@ from sqlalchemy.orm import Session
 
 from app.utils.files import getFile
 from app.core.env import APP_NAME, APP_DESCRIPTIOIN
-from app.dependencies.logs import get_db
-from app.services.logs import LogServices
 
-# from app.libs.logs import createLogs, ComplateLogs
 from app.utils import auth
-
-# from app.routers.admin import admin
+from app.utils.logs import LogServices
 
 
 from app.routers import (
@@ -57,7 +53,6 @@ app.mount("/static", StaticFiles(directory="files_static", html=False), name="st
 
 ### MAIN ###
 app.include_router(main.router)
-# app.include_router(files_create.router)
 
 ###################################################################################################################
 

@@ -8,8 +8,8 @@ from fastapi import Request, Response
 from starlette.routing import Match
 from user_agents import parse
 
-from app.schemas.logs import dataLogs
-from app.repositories.logs import LogsRepository
+from .schemas import dataLogs
+from .repositories import LogsRepository
 from app.core.env import APP_NAME
 
 

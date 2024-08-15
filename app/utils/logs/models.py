@@ -1,8 +1,5 @@
-import os
-
 from sqlalchemy import Column, Integer, String, Date, Time, Float, DateTime
-
-from app.dependencies.logs import Base
+from app.utils.logs.database import Base
 
 
 class TableLogs(Base):
