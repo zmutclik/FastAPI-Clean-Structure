@@ -15,6 +15,9 @@ SessionLocal.configure(binds={})
 def get_db():
     db = SessionLocal()
     try:
-        yield db
+        yield 
+    except:
+        db.rollback()
+        raise
     finally:
         db.close()
