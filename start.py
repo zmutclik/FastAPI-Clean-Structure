@@ -46,13 +46,5 @@ if __name__ == "__main__":
             )
     
     
-    if args.module == "celery":
-        Popen(
-            [
-                "celery",
-                "-A",
-                "worker.celery_app",
-                "worker",
-                "--loglevel=info"
-            ]
-        )
+    # if args.module == "celery":
+        # exec( "python -m celery -A worker.celery.celery_app worker --loglevel=info"  )

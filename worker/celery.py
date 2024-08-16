@@ -3,7 +3,7 @@ import os
 from functools import lru_cache
 from kombu import Queue
 from celery import current_app as current_celery_app
-from app.env import CELERY_BROKER_URL
+from app.core.env import CELERY_BROKER_URL
 
 
 def route_task(name, args, kwargs, options, task=None, **kw):
