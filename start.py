@@ -2,7 +2,7 @@ import os
 import uvicorn
 from dotenv import load_dotenv
 import argparse
-
+from subprocess import Popen
 #######################################################################################################################
 parser = argparse.ArgumentParser(description="Start Applikasi.", epilog="Pilih Module yang mau diJalankan.")
 parser.add_argument("module", help="Pilih salah satu = ws, celery atau fower")
@@ -43,3 +43,7 @@ if __name__ == "__main__":
                 reload=True,
                 reload_dirs=["app"],
             )
+    
+    
+    # if args.module == "celery":
+        # exec( "python -m celery -A worker.celery.celery_app worker --loglevel=info"  )
