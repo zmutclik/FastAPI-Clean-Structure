@@ -84,7 +84,21 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.datatables.net/v/bs5/dt-2.1.5/datatables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/fontawesome.min.js" integrity="sha512-NeFv3hB6XGV+0y96NVxoWIkhrs1eC3KXBJ9OJiTFktvbzJ/0Kk7Rmm9hJ2/c2wJjy6wG0a0lIgehHjCTDLRwWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="../static/js/datatables.js"></script>
+    <script>
+        $.extend(true, $.fn.dataTable.defaults, {
+            bSort: false,
+            bAutoWidth: true,
+            bJQueryUI: true,
+            bProcessing: true,
+            sPaginationType: "full_numbers",
+            bServerSide: true,
+            bPaginate: true,
+            aLengthMenu: [
+                [9999],
+                [9999],
+            ],
+        });
+    </script>
 
     <script>
         var oTable;
@@ -119,14 +133,7 @@
                     { "data": "method", "title": "METHOD", "width": "7%", "sClass": "center" },
                     { "data": "ipaddress", "title": "IPADDRESS", "width": "7%", "sClass": "center" },
                     { "data": "status_code", "title": "STATUS", "width": "7%", "sClass": "center" },
-                    { "data": "", "title": "", "width": "0%" },
                 ],
-                columnDefs: [{
-                    sClass: "right", searchable: false, orderable: false, bSortable: false, targets: -1, sWidth: "0%",
-                    render: function (data, type, row, meta) {
-                        return ''
-                    }
-                }],
             });
 
             $("#time_start,#time_end").flatpickr({
