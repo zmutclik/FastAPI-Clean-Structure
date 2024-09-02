@@ -10,9 +10,8 @@ Base = declarative_base()
 
 
 # Dependency
-def get_db():
-    now = datetime.now()
-    fileDB_ENGINE = "./files/data/db/logs_{}.db".format(now.strftime("%Y-%m"))
+def get_db(tahunbulan: datetime):
+    fileDB_ENGINE = "./files/data/db/logs_{}.db".format(tahunbulan.strftime("%Y-%m"))
     DB_ENGINE = "sqlite:///" + fileDB_ENGINE
     engine_db = create_engine(DB_ENGINE, connect_args={"check_same_thread": False})
 

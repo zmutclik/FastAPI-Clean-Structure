@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 import json
 
 import string
@@ -40,13 +41,19 @@ class LogServices:
 
     async def start(self, request: Request):
         request.state.username = None
-        user_agent = parse(request.headers.get("user-agent"))
+        try:
+            user_agent = parse(request.headers.get("user-agent"))
+            platform = user_agent.os.family + user_agent.os.version_string
+            browser = user_agent.browser.family + user_agent.browser.version_string
+        except:
+            platform = ""
+            browser = ""
         self.data = dataLogs(
-            startTime=self.startTime,
+            startTime=datetime.fromtimestamp(self.startTime),
             app=APP_NAME,
             client_id=self.clientId(request),
-            platform=user_agent.os.family + user_agent.os.version_string,
-            browser=user_agent.browser.family + user_agent.browser.version_string,
+            platform=platform,
+            browser=browser,
             path=request.scope["path"],
             path_params=self.parse_params(request),
             method=request.method,

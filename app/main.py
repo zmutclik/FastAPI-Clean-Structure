@@ -10,7 +10,7 @@ from app.utils.files import getFile
 from app.core.env import APP_NAME, APP_DESCRIPTIOIN
 
 from app.utils import auth
-from app.utils.logs import LogServices
+from app.utils.logs import LogServices,appLOGS
 
 
 from app.routers import (
@@ -46,6 +46,7 @@ app.add_middleware(
 
 
 app.mount("/auth", auth.app)
+app.mount("/logs", appLOGS)
 
 ###################################################################################################################
 ### STATIC ###

@@ -16,7 +16,6 @@ load_dotenv(dotenv_path)
 #######################################################################################################################
 APP_ENV = os.environ.get("EVIRONMENT", "DEVELOPMENT")
 APP_URL = os.environ.get("APP_URL", "127.0.0.1")
-APP_URL = os.environ.get("APP_URL", "0.0.0.0")
 APP_PORT = os.environ.get("APP_PORT", "8012")
 
 if __name__ == "__main__":
