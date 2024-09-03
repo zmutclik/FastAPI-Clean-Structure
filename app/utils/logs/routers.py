@@ -70,6 +70,12 @@ def dataTables(dataIn: DataTablesRequest, username: Annotated[str, Depends(get_c
         if dataIn.search["status"] != "":
             sql_ = sql_ + """ and status_code like \"{}%\" """.format(dataIn.search["status"])
 
+        if dataIn.search["path"] != "":
+            sql_ = sql_ + """ and path like \"%{}%\" """.format(dataIn.search["path"])
+
+        if dataIn.search["params"] != "":
+            sql_ = sql_ + """ and path_params like \"%{}%\" """.format(dataIn.search["params"])
+
         sql_ = sql_ + " order by startTime desc"
         for item in repo.execute(text(sql_)):
             item__ = {
