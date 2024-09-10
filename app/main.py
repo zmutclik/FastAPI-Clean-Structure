@@ -7,10 +7,10 @@ from starlette.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from app.utils.files import getFile
-from app.core.env import APP_NAME, APP_DESCRIPTIOIN
+from app.core import config
 
 from app.utils import auth
-from app.utils.logs import LogServices,appLOGS
+from app.utils.logs import LogServices, appLOGS
 
 
 from app.routers import (
@@ -20,8 +20,8 @@ from app.routers import (
 
 def create_app() -> FastAPI:
     current_app = FastAPI(
-        title=APP_NAME,
-        description=APP_DESCRIPTIOIN,
+        title=config.APP_NAME,
+        description=config.APP_DESCRIPTION,
         version="1.0.0",
         swagger_ui_parameters={"defaultModelsExpandDepth": -1},
         redoc_url=None,
@@ -58,10 +58,10 @@ app.include_router(main.router)
 ###################################################################################################################
 
 
-@app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
-    logs = LogServices()
-    await logs.start(request)
-    response = await call_next(request)
-    await logs.finish(request, response)
-    return response
+# @app.middleware("http")
+# async def add_process_time_header(request: Request, call_next):
+#     logs = LogServices()
+#     await logs.start(request)
+#     response = await call_next(request)
+#     await logs.finish(request, response)
+#     return response

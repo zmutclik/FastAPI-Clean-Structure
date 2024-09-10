@@ -6,7 +6,7 @@ from fastapi.security import SecurityScopes
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 
-from app.core.env import SECRET_TEXT, ALGORITHM
+from app.core import config
 from ..core.database import get_db, engine_db
 from ..repositories.users import UsersRepository
 
@@ -38,7 +38,7 @@ async def get_current_user(security_scopes: SecurityScopes, token: Annotated[str
         headers={"WWW-Authenticate": authenticate_value},
     )
     try:
-        payload = jwt.decode(token, SECRET_TEXT, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, config.SECRET_TEXT, algorithms=[config.ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception

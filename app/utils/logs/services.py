@@ -11,7 +11,7 @@ from user_agents import parse
 
 from .schemas import dataLogs
 from .repositories import LogsRepository
-from app.core.env import APP_NAME
+from app.core import config
 
 
 class LogServices:
@@ -19,7 +19,7 @@ class LogServices:
     def __init__(self):
         self.repository = LogsRepository()
         self.startTime = time.time()
-        clientId_key = APP_NAME.lower() + "_id"
+        clientId_key = config.APP_NAME.lower() + "_id"
         self.clientId_key = clientId_key.replace(" ", "_")
 
     def parse_params(self, request: Request):
