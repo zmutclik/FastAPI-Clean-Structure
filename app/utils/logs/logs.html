@@ -118,7 +118,7 @@
 
     <script>
         var oTable;
-        $('#time_end').val(moment().format("DD MMM YYYY HH:mm"));
+        $('#time_end').val(moment().subtract(-2, 'minutes').format("DD MMM YYYY HH:mm"));
         $('#time_start').val(moment().subtract(1, 'hours').format("DD MMM YYYY HH:mm"));
         $(document).ready(function () {
             oTable = $('#table_').DataTable({
@@ -181,7 +181,7 @@
             });
 
             $('.card-body').on('click', '.btntimenow', function () {
-                $('#time_end').val(moment().format("DD MMM YYYY HH:mm"));
+                $('#time_end').val(moment().val(moment().subtract(-2, 'minutes').format("DD MMM YYYY HH:mm"));
                 $('#time_start').val(moment().subtract(1, 'hours').format("DD MMM YYYY HH:mm"));
                 setTimeout(function () {
                     oTable.ajax.reload();
