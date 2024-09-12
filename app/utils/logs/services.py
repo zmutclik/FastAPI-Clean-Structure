@@ -11,16 +11,16 @@ from user_agents import parse
 
 from .schemas import dataLogs
 from .repositories import LogsRepository
-from app.core import config
 
 
 class LogServices:
 
-    def __init__(self):
+    def __init__(self, clientId_key, session_key, APP_NAME):
         self.repository = LogsRepository()
         self.startTime = time.time()
-        clientId_key = config.APP_NAME.lower() + "_id"
-        self.clientId_key = clientId_key.replace(" ", "_")
+        self.clientId_key = clientId_key
+        self.session_key = session_key
+        self.APP_NAME = APP_NAME
 
     def parse_params(self, request: Request):
         path_params = {}
@@ -31,16 +31,17 @@ class LogServices:
                     path_params[name] = value
         return json.dumps(path_params)
 
-    def clientId(self, request: Request):
-        clientId = request.cookies.get(self.clientId_key)
+    def generateId(self, request: Request, key: str):
+        clientId = request.cookies.get(key)
         if clientId is None:
-            self.clientId_new = True
-            return "".join(random.choices(string.ascii_letters + string.digits, k=32))
-        self.clientId_new = False
+            clientId = "".join(random.choices(string.ascii_letters + string.digits, k=32))
+        request.state.clientId = clientId
         return clientId
 
     async def start(self, request: Request):
         request.state.username = None
+        client_id = request.state.clientId = self.generateId(request, self.clientId_key)
+        session_id = request.state.sessionId = self.generateId(request, self.session_key)
         try:
             user_agent = parse(request.headers.get("user-agent"))
             platform = user_agent.os.family + user_agent.os.version_string
@@ -50,8 +51,9 @@ class LogServices:
             browser = ""
         self.data = dataLogs(
             startTime=datetime.fromtimestamp(self.startTime),
-            app=APP_NAME,
-            client_id=self.clientId(request),
+            app=self.APP_NAME,
+            client_id=client_id,
+            session_id=session_id,
             platform=platform,
             browser=browser,
             path=request.scope["path"],
@@ -59,14 +61,14 @@ class LogServices:
             method=request.method,
             ipaddress=request.client.host,
         )
-        request.state.client_id = self.data.client_id
         return request
 
     async def finish(self, request: Request, response: Response):
         self.data.username = request.state.username
         self.data.status_code = response.status_code
         self.data.process_time = time.time() - self.startTime
-        if self.clientId_new:
-            response.set_cookie(key=self.clientId_key, value=self.data.client_id)
+
+        response.set_cookie(key=self.clientId_key, value=self.data.client_id)
+        response.set_cookie(key=self.session_key, value=self.data.session_id)
 
         self.repository.create(self.data.model_dump())

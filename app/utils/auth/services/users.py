@@ -1,17 +1,18 @@
 from typing import Annotated
+from datetime import timedelta
 
 from pydantic import ValidationError
-from fastapi import Security, Depends, HTTPException, Request, status
+from fastapi import Security, Depends, HTTPException, Request, status, Response
 from fastapi.security import SecurityScopes
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 
 from app.core import config
 from ..core.database import get_db, engine_db
-from ..repositories.users import UsersRepository
+from ..repositories import UsersRepository, ScopesRepository
 
-from ..services.scope import oauth2_scheme
-from ..services.password import verify_password, get_password_hash
+from ..services.scope import oauth2_scheme, verify_scope
+from ..services.password import verify_password, get_password_hash, create_access_token
 
 from ..schemas.token import TokenData
 from ..schemas.users import UserResponse
@@ -70,3 +71,21 @@ async def get_current_active_user(
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+def create_user_access_token(db: Session, userModel, userScope, unlimited_token: bool = False) -> str:
+    access_token_expires = None if userModel.unlimited_token_expires and unlimited_token else timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
+    user_scope = verify_scope(userModel.id, userScope, db)
+    access_token = create_access_token(
+        data={"sub": userModel.username, "scopes": user_scope},
+        expires_delta=access_token_expires,
+    )
+    return access_token
+
+
+def create_cookie_access_token(db: Session, response: Response, userModel):
+    userScope = []
+    for item in ScopesRepository(db).getScopesUser(userModel.id):
+        userScope.append(item.scope)
+    access_token = create_user_access_token(db, userModel, userScope)
+    response.set_cookie(key=config.TOKEN_KEY, value=access_token)

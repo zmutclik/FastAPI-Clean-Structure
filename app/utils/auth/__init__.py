@@ -1,8 +1,15 @@
-from fastapi import FastAPI
-from .routers import user, scope, token,login
+from fastapi import FastAPI, Request, status
+
+from .routers_page import loginPage
+from .routers import user, scope, token
 from .schemas import UserSchemas
-from .services import get_current_active_user,get_current_user
+from .services import get_current_active_user, get_current_user
 from starlette.staticfiles import StaticFiles
+
+
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 ###################################################################################################################
 app = FastAPI(
@@ -23,7 +30,7 @@ def read_sub():
 app.include_router(token.router)
 app.include_router(user.router)
 app.include_router(scope.router)
-app.include_router(login.router)
+app.include_router(loginPage.router)
 
 __all__ = [
     "UserSchemas",

@@ -7,6 +7,7 @@ class dataLogs(BaseModel):
     startTime: datetime
     app: str
     client_id: Union[str, None] = None
+    session_id: Union[str, None] = None
     platform: str
     browser: str
     path: str

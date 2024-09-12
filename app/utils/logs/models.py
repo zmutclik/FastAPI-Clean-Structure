@@ -7,6 +7,7 @@ class TableLogs(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     client_id = Column(String(32), index=True)
+    session_id = Column(String(32), index=True)
     startTime = Column(DateTime)
     app = Column(String(100), index=True)
     platform = Column(String(100), index=True)

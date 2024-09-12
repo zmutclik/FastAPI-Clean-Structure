@@ -13,9 +13,7 @@ from app.utils import auth
 from app.utils.logs import LogServices, appLOGS
 
 
-from app.routers import (
-    main,
-)
+from app import routers,routers_page
 
 
 def create_app() -> FastAPI:
@@ -53,15 +51,16 @@ app.mount("/logs", appLOGS)
 app.mount("/static", StaticFiles(directory="files_static", html=False), name="static")
 
 ### MAIN ###
-app.include_router(main.router)
+app.include_router(routers.mainRouter)
+app.include_router(routers_page.dashboardPageRouter)
 
 ###################################################################################################################
 
 
-# @app.middleware("http")
-# async def add_process_time_header(request: Request, call_next):
-#     logs = LogServices()
-#     await logs.start(request)
-#     response = await call_next(request)
-#     await logs.finish(request, response)
-#     return response
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    logs = LogServices(config.CLIENTID_KEY, config.SESSION_KEY, config.APP_NAME)
+    await logs.start(request)
+    response = await call_next(request)
+    await logs.finish(request, response)
+    return response

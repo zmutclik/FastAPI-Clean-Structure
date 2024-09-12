@@ -18,7 +18,7 @@ class DBConfig(BaseSettings):
     USER: str = "root"
     PASSWORD: str = "blackant"
     NAME: str = "db"
-    
+
     @property
     def DB_ENGINE(self) -> str:
         return "mysql+pymysql://{user}:{password}@{hostname}:{port}/{database}".format(
@@ -53,6 +53,10 @@ class Config(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
     APP_NAME: str = Field("FastAPI-Clean-Structure")
     APP_DESCRIPTION: str = Field("This is a very fancy project, with auto docs for the API and everything.")
+    
+    CLIENTID_KEY: str = Field("fastapi-clean-structure_id")
+    SESSION_KEY: str = Field("fastapi-clean-structure_sesi")
+    TOKEN_KEY: str = Field("fastapi-clean-structure_token")
 
     SECRET_TEXT: str = "HxekWSNWYKyOsezYRQxFEJNgbUroNzDT"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30

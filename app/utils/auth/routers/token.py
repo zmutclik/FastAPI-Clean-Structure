@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.core import config
 from ..core.database import get_db
 
-from ..services import authenticate_user, verify_scope, create_access_token
+from ..services import authenticate_user, verify_scope, create_user_access_token
 
 from ..schemas import Token, TokenData
 
@@ -26,10 +26,5 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES) if not user.unlimited_token_expires else None
-    user_scope = verify_scope(user.id, form_data.scopes, db)
-    access_token = create_access_token(
-        data={"sub": user.username, "scopes": user_scope},
-        expires_delta=access_token_expires,
-    )
+    access_token = create_user_access_token(db, user, form_data.scopes, True)
     return {"access_token": access_token, "token_type": "bearer"}
