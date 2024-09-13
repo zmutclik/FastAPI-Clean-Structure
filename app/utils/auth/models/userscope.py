@@ -19,3 +19,7 @@ class UserScopeTable(Base):
     @hybrid_property
     def scope(self) -> str:
         return self.SCOPES.scope
+
+    @hybrid_property
+    def desc(self) -> str:
+        return self.SCOPES.desc

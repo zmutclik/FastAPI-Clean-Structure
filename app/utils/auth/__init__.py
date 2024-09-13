@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, status
 from .routers_page import loginPage
 from .routers import user, scope, token
 from .schemas import UserSchemas
-from .services import get_current_active_user, get_current_user
+from .services import get_current_active_user, get_current_user, page_get_current_active_user
 from starlette.staticfiles import StaticFiles
 
 
@@ -35,4 +35,5 @@ app.include_router(loginPage.router)
 __all__ = [
     "UserSchemas",
     "get_current_active_user",
+    "page_get_current_active_user",
 ]

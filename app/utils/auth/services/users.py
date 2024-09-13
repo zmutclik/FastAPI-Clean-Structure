@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from pydantic import ValidationError
 from fastapi import Security, Depends, HTTPException, Request, status, Response
+from fastapi.responses import RedirectResponse
 from fastapi.security import SecurityScopes
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
@@ -16,6 +17,15 @@ from ..services.password import verify_password, get_password_hash, create_acces
 
 from ..schemas.token import TokenData
 from ..schemas.users import UserResponse
+from app.Exceptions import RequiresLoginException
+
+
+def credentials_exception(authenticate_detail: str, authenticate_value: str):
+    return HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=authenticate_detail,
+        headers={"WWW-Authenticate": authenticate_value},
+    )
 
 
 def authenticate_user(username: str, password: str, db: Session):
@@ -28,49 +38,61 @@ def authenticate_user(username: str, password: str, db: Session):
     return user
 
 
+def decode_token(token: str, exception):
+    try:
+        payload = jwt.decode(token, config.SECRET_TEXT, algorithms=[config.ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise exception
+        token_scopes = payload.get("scopes", [])
+        token_data = TokenData(scopes=token_scopes, username=username)
+    except (JWTError, ValidationError):
+        raise exception
+
+    return token_data
+
+
 async def get_current_user(security_scopes: SecurityScopes, token: Annotated[str, Depends(oauth2_scheme)], request: Request):
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
     else:
         authenticate_value = "Bearer"
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": authenticate_value},
-    )
-    try:
-        payload = jwt.decode(token, config.SECRET_TEXT, algorithms=[config.ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-        token_scopes = payload.get("scopes", [])
-        token_data = TokenData(scopes=token_scopes, username=username)
-    except (JWTError, ValidationError):
-        raise credentials_exception
+
+    token_data = decode_token(token, credentials_exception("Could not validate credentials", authenticate_value))
 
     with engine_db.begin() as connection:
         with Session(bind=connection) as db:
-            userrepo = UsersRepository(db)
-            user = userrepo.get(token_data.username)
+            user = UsersRepository(db).get(token_data.username)
             if user is None:
-                raise credentials_exception
+                raise credentials_exception("Could not validate credentials", authenticate_value)
             for scope in security_scopes.scopes:
                 if scope not in token_data.scopes:
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Not enough permissions",
-                        headers={"WWW-Authenticate": authenticate_value},
-                    )
+                    raise credentials_exception("Not enough permissions", authenticate_value)
+
             request.state.username = user.username
             return user
 
 
-async def get_current_active_user(
-    current_user: Annotated[UserResponse, Security(get_current_user, scopes=["default"])],
-):
+async def get_current_active_user(current_user: Annotated[UserResponse, Security(get_current_user, scopes=["default"])]):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+async def page_get_current_active_user(request: Request):
+    token = request.cookies.get(config.TOKEN_KEY)
+    if token is None:
+        raise RequiresLoginException(f"/login")
+    token_data = decode_token(token, RequiresLoginException(f"/login"))
+
+    with engine_db.begin() as connection:
+        with Session(bind=connection) as db:
+            user = UsersRepository(db).get(token_data.username)
+            if user is None:
+                raise RequiresLoginException(f"/login")
+
+            request.state.username = user.username
+            return user
 
 
 def create_user_access_token(db: Session, userModel, userScope, unlimited_token: bool = False) -> str:

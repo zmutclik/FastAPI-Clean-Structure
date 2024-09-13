@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import FastAPI, Request, Response, Depends
+from fastapi import FastAPI, Request, Response, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.staticfiles import StaticFiles
@@ -13,7 +13,7 @@ from app.utils import auth
 from app.utils.logs import LogServices, appLOGS
 
 
-from app import routers,routers_page
+from app import routers, routers_page
 
 
 def create_app() -> FastAPI:
@@ -64,3 +64,14 @@ async def add_process_time_header(request: Request, call_next):
     response = await call_next(request)
     await logs.finish(request, response)
     return response
+
+
+###################################################################################################################
+from fastapi.responses import RedirectResponse
+from app.Exceptions import RequiresLoginException
+from fastapi.responses import JSONResponse
+
+
+@app.exception_handler(RequiresLoginException)
+async def requires_login(request: Request, _: Exception):
+    return RedirectResponse(f"/auth/login")
