@@ -82,14 +82,14 @@ async def get_current_active_user(current_user: Annotated[UserResponse, Security
 async def page_get_current_active_user(request: Request):
     token = request.cookies.get(config.TOKEN_KEY)
     if token is None:
-        raise RequiresLoginException(f"/login")
-    token_data = decode_token(token, RequiresLoginException(f"/login"))
+        raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
+    token_data = decode_token(token, RequiresLoginException(f"/auth/login?next=" + request.url.path))
 
     with engine_db.begin() as connection:
         with Session(bind=connection) as db:
             user = UsersRepository(db).get(token_data.username)
             if user is None:
-                raise RequiresLoginException(f"/login")
+                raise RequiresLoginException(f"/auth/login?next=" + request.url.path)
 
             request.state.username = user.username
             return user

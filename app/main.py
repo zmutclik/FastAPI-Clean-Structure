@@ -74,4 +74,4 @@ from fastapi.responses import JSONResponse
 
 @app.exception_handler(RequiresLoginException)
 async def requires_login(request: Request, _: Exception):
-    return RedirectResponse(f"/auth/login")
+    return RedirectResponse(_.nextRouter)

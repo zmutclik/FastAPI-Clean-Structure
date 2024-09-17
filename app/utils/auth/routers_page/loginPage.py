@@ -23,22 +23,24 @@ templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/login", response_class=HTMLResponse)
-def form_login(request: Request):
+def form_login(request: Request, next: str = None):
     return templates.TemplateResponse(
         request=request,
         name="auth/login/login.html",
-        context={"app_name": config.APP_NAME, "clientId": request.state.clientId, "sessionId": request.state.sessionId},
+        context={"app_name": config.APP_NAME, "clientId": request.state.clientId, "sessionId": request.state.sessionId, "nextpage": next},
     )
 
 
 @router.get("/{clientId}/{sessionId}/login.js")
-def js_login(clientId: str, sessionId: str, request: Request):
+def js_login(clientId: str, sessionId: str, request: Request, next: str = None):
+    if next is None:
+        next = "/dashboard"
     if request.state.clientId == clientId and request.state.sessionId == sessionId:
         return templates.TemplateResponse(
             request=request,
             name="auth/login/login.js",
             media_type="application/javascript",
-            context={"clientId": request.state.clientId, "sessionId": request.state.sessionId},
+            context={"clientId": request.state.clientId, "sessionId": request.state.sessionId, "nextpage": next},
         )
     else:
         raise HTTPException(status_code=404)

@@ -24,6 +24,7 @@ $(document).ready(function () {
             axios.post('{{clientId}}/{sessionId}/login', { "email": $('#formLogin input[name=email]').val(), "password": $('#formLogin input[name=password]').val() })
                 .then(function (response) {
                     console.log(response);
+                    window.location.href = "{{nextpage}}";
                 })
                 .catch(function (error) {
                     formLogin.showErrors({

@@ -1,2 +1,3 @@
 class RequiresLoginException(Exception):
-    pass
+    def __init__(self, nextRouter: str):
+        self.nextRouter = nextRouter
