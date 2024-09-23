@@ -2,7 +2,7 @@ from typing import Annotated, Union
 
 from fastapi import APIRouter, Request, Response, Cookie, Security
 from starlette.responses import FileResponse
-from app.utils.auth import UserSchemas, get_current_user
+from core import UserSchemas, get_current_user
 
 router = APIRouter()
 

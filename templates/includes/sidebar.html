@@ -14,8 +14,8 @@
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-        <li class="nav-item has-treeview {% if 'index' in segment %} menu-open {% endif %}">
-          <a href="/dashboard" class="nav-link {% if 'index' in segment %} active {% endif %}">
+        <li class="nav-item has-treeview {% if 'dashboard' in segment %} menu-open {% endif %}">
+          <a href="/page/dashboard" class="nav-link {% if 'dashboard' in segment %} active {% endif %}">
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>
               Dashboard
@@ -23,8 +23,8 @@
           </a>
         </li>
 
-        <li class="nav-item has-treeview {% if 'index' in segment %} menu-open {% endif %}">
-          <a href="#" class="nav-link {% if 'index' in segment %} active {% endif %}">
+        <li class="nav-item has-treeview {% if 'system' in segment %} menu-open {% endif %}">
+          <a href="#" class="nav-link {% if 'system' in segment %} active {% endif %}">
             <i class="nav-icon fas fa-cogs"></i>
             <p>
               System
@@ -33,7 +33,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="/index.html" class="nav-link {% if 'index.html' in segment %} active {% endif %}">
+              <a href="/page/users" class="nav-link {% if 'users' in segment %} active {% endif %}">
                 <i class="lni lni-user nav-icon"></i>
                 <p>Users</p>
               </a>

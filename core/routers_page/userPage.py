@@ -18,8 +18,8 @@ router = APIRouter(
 templates = Jinja2Templates(directory="templates")
 
 
-@router.get("/dashboard", response_class=HTMLResponse)
-def dashboard(
+@router.get("/users", response_class=HTMLResponse)
+def page_system_users(
     request: Request,
     current_user: Annotated[UserSchemas, Depends(page_get_current_active_user)],
 ):

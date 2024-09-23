@@ -9,8 +9,7 @@ from sqlalchemy.orm import Session
 from app.utils.files import getFile
 from app.core import config
 
-from app.utils import auth
-from app.utils.logs import LogServices, appLOGS
+from core import LogServices, main_logs, main_auth, routers_page as core_page
 
 
 from app import routers, routers_page
@@ -43,16 +42,19 @@ app.add_middleware(
 )
 
 
-app.mount("/auth", auth.app)
-app.mount("/logs", appLOGS)
+app.mount("/auth", main_auth.app)
+app.mount("/logs", main_logs.app)
 
 ###################################################################################################################
 ### STATIC ###
 app.mount("/static", StaticFiles(directory="files_static", html=False), name="static")
 
-### MAIN ###
+### MAIN API ###
 app.include_router(routers.mainRouter)
+
+### MAIN PAGE ###
 app.include_router(routers_page.dashboardPageRouter)
+app.include_router(core_page.userPage.router)
 
 ###################################################################################################################
 
