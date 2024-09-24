@@ -1,5 +1,5 @@
-from . import userPage
+from .userPage import router as userPageRouter
 
 __all__ = [
-    "userPage",
+    "userPageRouter",
 ]
