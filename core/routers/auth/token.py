@@ -26,5 +26,5 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    access_token = create_user_access_token(db, user, form_data.scopes, True)
+    access_token = create_user_access_token(db, user, form_data.scopes)
     return {"access_token": access_token, "token_type": "bearer"}

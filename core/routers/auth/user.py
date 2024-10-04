@@ -6,7 +6,7 @@ from ...repositories.auth import UsersRepository, UserScopesRepository
 
 from ...services.auth import get_current_active_user, verify_password, get_password_hash
 
-from ...schemas.auth import UserResponse, UserSave, UserSchemas, UserScopesSave
+from ...schemas.auth import UserResponse, UserSave, UserSchemas, UserScopesSave, UserDataIn
 
 ### SCHEMAS ############################################################################################################
 from typing import Generic, TypeVar, List, Optional, Union, Annotated, Any, Dict
@@ -53,27 +53,18 @@ async def ganti_password(
 
 @router.post("/users", response_model=UserResponse)
 async def create_user(
-    username: Annotated[str, Form()],
-    email: Annotated[EmailStr, Form()],
-    full_name: Annotated[str, Form()],
-    password: Annotated[str, Form()],
+    dataIn: UserDataIn,
     current_user: Annotated[UserSchemas, Security(get_current_active_user, scopes=["admin"])],
     db: Session = Depends(get_db),
 ):
     userrepo = UsersRepository(db)
-    if userrepo.get(username):
+    if userrepo.get(dataIn.username):
         raise HTTPException(status_code=400, detail="Username has Used.")
-    if userrepo.getByEmail(email):
+    if userrepo.getByEmail(dataIn.email):
         raise HTTPException(status_code=400, detail="Email has Used.")
 
-    hashed_password = get_password_hash(password)
-    data = UserSave(
-        username=username,
-        email=email,
-        hashed_password=hashed_password,
-        full_name=full_name,
-        created_user=current_user.username,
-    )
+    data = UserSave.model_validate(dataIn.model_dump())
+    data.created_user = current_user.username
     return userrepo.create(data.model_dump())
 
 

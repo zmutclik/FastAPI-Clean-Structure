@@ -18,7 +18,7 @@ router = APIRouter(
 templates = Jinja2Templates(directory="templates")
 
 
-@router.get("/dashboard", response_class=HTMLResponse)
+@router.get("/dashboard", response_class=HTMLResponse, include_in_schema=False)
 def dashboard(
     request: Request,
     current_user: Annotated[UserSchemas, Depends(page_get_current_active_user)],

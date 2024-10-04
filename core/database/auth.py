@@ -47,7 +47,7 @@ if os.path.exists(fileDB_ENGINE):
                         "email": "admin@test.id",
                         "full_name": "Admin SeMuT",
                         "hashed_password": "$2b$12$ofIPPqnjPf54SzEvctr3DOzNqyjZQqDaA3GraVDvBobo/UfjtGqQm",
-                        "unlimited_token_expires": True,
+                        "limit_expires": "525960",
                         "created_user": "admin",
                     }
                 )

@@ -95,12 +95,11 @@ async def page_get_current_active_user(request: Request):
             return user
 
 
-def create_user_access_token(db: Session, userModel, userScope, unlimited_token: bool = False) -> str:
-    access_token_expires = None if userModel.unlimited_token_expires and unlimited_token else timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
+def create_user_access_token(db: Session, userModel, userScope) -> str:
     user_scope = verify_scope(userModel.id, userScope, db)
     access_token = create_access_token(
         data={"sub": userModel.username, "scopes": user_scope},
-        expires_delta=access_token_expires,
+        expires_delta=timedelta(minutes=userModel.limit_expires),
     )
     return access_token
 

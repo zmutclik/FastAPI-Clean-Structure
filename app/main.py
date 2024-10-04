@@ -72,6 +72,7 @@ async def add_process_time_header(request: Request, call_next):
 from fastapi.responses import RedirectResponse
 from app.Exceptions import RequiresLoginException
 
+
 @app.exception_handler(RequiresLoginException)
 async def requires_login(request: Request, _: Exception):
     return RedirectResponse(_.nextRouter)

@@ -1,6 +1,5 @@
-from .page import TemplateResponseSet, TemplateResponseJSSet
+from .page import TemplateResponseSet
 
 __all__ = [
     "TemplateResponseSet",
-    "TemplateResponseJSSet",
 ]

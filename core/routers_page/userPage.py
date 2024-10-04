@@ -1,4 +1,4 @@
-from typing import Annotated, Union, Any
+from typing import Annotated, Union, Any, Literal
 from enum import Enum
 
 from fastapi import APIRouter, Request, Response, Cookie, Security, Depends, HTTPException, status
@@ -6,12 +6,14 @@ from fastapi.responses import HTMLResponse
 from starlette.responses import FileResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 from ..database.auth import engine_db, get_db
 from app.core import config
-from core import UserSchemas, page_get_current_active_user
+from core import UserSchemas, page_get_current_active_user as get_user_active
 from core.models import auth
-from core.schemas import TemplateResponseSet, TemplateResponseJSSet
+from core.schemas import TemplateResponseSet
+from ..repositories.auth import UsersRepository
 
 from sqlalchemy import select
 
@@ -26,32 +28,42 @@ templates = Jinja2Templates(directory="templates")
 path_template = "page/system/users/"
 
 
-class PathEnum(str, Enum):
-    form = "form"
+class PathJS(str, Enum):
     indexJs = "index.js"
     formJs = "form.js"
 
 
-@router.get("/", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse, include_in_schema=False)
 def page_system_users(
-    request: Request,
-    current_user: Annotated[UserSchemas, Depends(page_get_current_active_user)],
+    req: Request,
+    c_user: Annotated[UserSchemas, Depends(get_user_active)],
 ):
-    return TemplateResponseSet(templates, path_template + "index", request)
+    return TemplateResponseSet(templates, path_template + "index", req)
 
 
-@router.get("/{clientId}/{sessionId}/{app_version}/{pathFile}", response_class=HTMLResponse)
-def page_(
-    clientId: str,
-    sessionId: str,
-    request: Request,
-    current_user: Annotated[UserSchemas, Depends(page_get_current_active_user)],
-    pathFile: PathEnum,
+@router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
+def page_system_users_form(cId: str, sId: str, req: Request, c_user: Annotated[UserSchemas, Depends(get_user_active)]):
+    return TemplateResponseSet(templates, path_template + "form", req, cId, sId)
+
+
+@router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
+def page_system_users_form(
+    cId: str,
+    sId: str,
+    id: int,
+    req: Request,
+    c_user: Annotated[UserSchemas, Depends(get_user_active)],
+    db: Session = Depends(get_db),
 ):
-    return TemplateResponseSet(templates, path_template + pathFile, request, clientId, sessionId)
+    return TemplateResponseSet(templates, path_template + "form", req, cId, sId, data={"user": UsersRepository(db).getById(id)})
 
 
-@router.post("/{clientId}/{sessionId}/datatables", status_code=201)
+@router.get("/{cId}/{sId}/{app_version}/{pathFile}", response_class=HTMLResponse, include_in_schema=False)
+def page_js(cId: str, sId: str, req: Request, pathFile: PathJS):
+    return TemplateResponseSet(templates, path_template + pathFile, req, cId, sId)
+
+
+@router.post("/{clientId}/{sessionId}/datatables", status_code=201, include_in_schema=False)
 def get_datatable_result(
     params: dict[str, Any],
     clientId: str,
@@ -61,8 +73,8 @@ def get_datatable_result(
     if request.state.clientId == clientId and request.state.sessionId == sessionId:
         datatable: DataTable = DataTable(
             request_params=params,
-            table=select(auth.UsersTable),
-            column_names=["id", "username", "email", "full_name", "unlimited_token_expires"],
+            table=select(auth.UsersTable, auth.UsersTable.id.label("DT_RowId")),
+            column_names=["DT_RowId", "id", "username", "email", "full_name"],
             engine=engine_db,
             # callbacks=callbacks,
         )

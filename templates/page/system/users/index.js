@@ -18,11 +18,26 @@ $(document).ready(function () {
             { "data": "username", "title": "USERNAME", },
             { "data": "email", "title": "EMAIL", },
             { "data": "full_name", "title": "NAMA", },
-            { "data": "unlimited_token_expires", "title": "UNLIMITED TOKEN", },
+
+            { "data": "id", "title": "" },
         ],
+        columnDefs: [{
+            sClass: "right", searchable: false, orderable: false, bSortable: false, targets: -1, sWidth: "0px",
+            render: function (data, type, row, meta) {
+                btnhtml = "<div class=\"btn-group\" role=\"group\">";
+                btnhtml += "<button type=\"button\" class=\"btn btn-success btnEdit\"><i class=\"lni lni-pencil-alt\"></i></button>";
+                btnhtml += "<button type=\"button\" class=\"btn btn-danger btnDelete\"><i class=\"lni lni-trash-can\"></i></button>";
+                btnhtml += "</div>"
+                return btnhtml;
+            }
+        }],
     });
 
     $("#btnTambah").on("click", function () {
-      window.location.href = '/page/users/{{clientId}}/{{sessionId}}/{{app_version}}/form';
+        window.location.href = '/page/users/{{clientId}}/{{sessionId}}/add';
+    });
+
+    $("#table_").on("click", '.btnEdit', function () {
+        window.location.href = '/page/users/{{clientId}}/{{sessionId}}/' + $(this).parents('tr').attr('id');
     });
 });

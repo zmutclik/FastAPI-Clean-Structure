@@ -5,21 +5,33 @@ from datetime import date, time, datetime
 from .scope import Scopes
 
 
-class UserSave(BaseModel):
+class UserDataIn(BaseModel):
     username: str
     email: EmailStr
     full_name: str
-    hashed_password: str
-    created_user: str
+    limit_expires: Optional[int] = 30
+
+
+class UserSave(UserDataIn):
+    hashed_password: Optional[str] = None
+    created_user: Optional[str] = None
+
+
+class UserEdit(UserDataIn):
+    full_name: str
+    limit_expires: Optional[int] = 30
+    updated_at: Optional[str] = None
+
 
 class UserSchemas(UserSave):
     id: int
+
 
 class UserResponse(BaseModel):
     # id: int
     username: str
     email: EmailStr
     full_name: str
-    unlimited_token_expires: bool = False
+    limit_expires: int = 30
     disabled: bool = False
     SCOPES: list[Scopes]

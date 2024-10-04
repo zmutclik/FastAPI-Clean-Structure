@@ -17,6 +17,6 @@ async def root(request: Request, current_user: Annotated[UserSchemas, Security(g
     return {"message": "Hello BOZ " + current_user.username + "@" + request.client.host + " !!!"}
 
 
-@router.get("/favicon.ico")
+@router.get("/favicon.ico", include_in_schema=False)
 def favicon():
     return FileResponse("files_static/favicon.ico")

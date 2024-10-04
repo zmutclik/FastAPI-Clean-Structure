@@ -12,6 +12,7 @@ def TemplateResponseSet(
     clientId: Union[str, None] = None,
     sessionId: Union[str, None] = None,
     media_type: str = "text/html",
+    data: dict = {},
 ):
     if clientId is not None or sessionId is not None:
         if request.state.clientId != clientId or request.state.sessionId != sessionId:
@@ -22,27 +23,19 @@ def TemplateResponseSet(
     else:
         path_template = path_template + ".html"
 
+    context = {
+        "app_name": config.APP_NAME,
+        "app_version": config.APP_VERSION,
+        "clientId": request.state.clientId,
+        "sessionId": request.state.sessionId,
+        "TOKEN_KEY": config.TOKEN_KEY,
+        "segment": request.scope["route"].name,
+    }
+
+    context.update(data)
     return templates.TemplateResponse(
         request=request,
         name=path_template,
         media_type=media_type,
-        context={
-            "app_name": config.APP_NAME,
-            "app_version": config.APP_VERSION,
-            "clientId": request.state.clientId,
-            "sessionId": request.state.sessionId,
-            "segment": request.scope["route"].name,
-        },
+        context=context,
     )
-
-
-def TemplateResponseJSSet(templates: Any, name: str, request: Request, clientId: str, sessionId: str):
-    if request.state.clientId == clientId and request.state.sessionId == sessionId:
-        return TemplateResponseSet(
-            templates,
-            name,
-            request,
-            "application/javascript",
-        )
-    else:
-        raise HTTPException(status_code=404)

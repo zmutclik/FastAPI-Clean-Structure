@@ -21,9 +21,8 @@ $(document).ready(function () {
         if (formLogin.valid()) {
             $('#formLogin input,#formLogin button').blur();
             $("#formLogin").LoadingOverlay("show");
-            axios.post('{{clientId}}/{sessionId}/login', { "email": $('#formLogin input[name=email]').val(), "password": $('#formLogin input[name=password]').val() })
+            axios.post('{{clientId}}/{{sessionId}}/login', { "email": $('#formLogin input[name=email]').val(), "password": $('#formLogin input[name=password]').val() })
                 .then(function (response) {
-                    console.log(response);
                     window.location.href = "{{nextpage}}";
                 })
                 .catch(function (error) {
@@ -34,7 +33,7 @@ $(document).ready(function () {
                 })
                 .finally(() => {
                     $("#formLogin").LoadingOverlay("hide");
-                })
+                });
         }
         return false;
     });

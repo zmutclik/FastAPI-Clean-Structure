@@ -16,7 +16,7 @@ class UsersTable(Base):
     email = Column(String(50), unique=True, index=True)
     full_name = Column(String(50))
     hashed_password = Column(String(256))
-    unlimited_token_expires = Column(Boolean, default=False)
+    limit_expires = Column(Integer, default=30)
     disabled = Column(Boolean, default=False)
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
